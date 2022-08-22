@@ -1,0 +1,65 @@
+<configuration>
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level][%t][%logger{50}] - %msg%n"/>
+    <property name="log_path" value="./logs"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="DEFAULT"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${log_path}/default.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log_path}/default.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                ${LOG_PATTERN}
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <appender name="INTEGRATION"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${log_path}/common-integration.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log_path}/common-integration.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                ${LOG_PATTERN}
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <File>${log_path}/common-error.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log_path}/common-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                ${LOG_PATTERN}
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="DEFAULT" />
+        <appender-ref ref="ERROR" />
+    </root>
+
+    <logger name="com.mrhan.localworkmng.integration" level="INFO">
+        <appender-ref ref="INTEGRATION" />
+    </logger>
+</configuration>
