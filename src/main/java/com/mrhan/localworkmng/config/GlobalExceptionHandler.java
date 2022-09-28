@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public BaseResult commonErrorHandler(HttpServletRequest req, Exception e) {
-        LoggerUtil.error(LOGGER, e, "(uncaught exception)({})", req.getPathInfo());
+        LoggerUtil.error(LOGGER, e, "(uncaught exception)({})", req.getServletPath());
         if (e instanceof BizException) {
             return new BaseResult(((BizException) e).getErrorCode(), ((BizException) e).getErrorMessage());
         }

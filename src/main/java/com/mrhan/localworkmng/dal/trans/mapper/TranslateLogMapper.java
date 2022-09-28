@@ -1,7 +1,7 @@
 package com.mrhan.localworkmng.dal.trans.mapper;
 
-import com.mrhan.localworkmng.dal.trans.model.TranslateLog;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.mrhan.localworkmng.dal.trans.model.TranslateLogDO;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author MrHan
  * @since 2022-08-09
  */
-public interface TranslateLogMapper extends BaseMapper<TranslateLog> {
+public interface TranslateLogMapper extends BaseMapper<TranslateLogDO> {
 
 }
