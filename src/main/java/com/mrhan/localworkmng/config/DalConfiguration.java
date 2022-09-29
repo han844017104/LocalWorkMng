@@ -4,7 +4,9 @@
  */
 package com.mrhan.localworkmng.config;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -21,7 +23,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
-import java.util.Properties;
 
 /**
  * @Author yuhang
@@ -31,7 +32,7 @@ import java.util.Properties;
 @Component
 @EnableTransactionManagement
 @MapperScan(basePackages = {"com.mrhan.localworkmng.dal.trans.mapper"},
-        sqlSessionFactoryRef = "transSqlSessionFactory", sqlSessionTemplateRef = "transSqlSessionTemplate")
+        sqlSessionTemplateRef = "transSqlSessionTemplate")
 public class DalConfiguration {
 
     /**
@@ -51,9 +52,7 @@ public class DalConfiguration {
         bean.setMapperLocations(new PathMatchingResourcePatternResolver()
                 .getResources("classpath:mapper/trans/*.xml"));
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        Properties properties = new Properties();
-        properties.put("dialectType", "MYSQL");
-        interceptor.setProperties(properties);
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         bean.setPlugins(interceptor);
         return bean.getObject();
     }

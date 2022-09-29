@@ -13,6 +13,7 @@ import com.mrhan.localworkmng.model.response.trans.TransTextDTO;
 import com.mrhan.localworkmng.util.BeanUtil;
 import com.mrhan.localworkmng.util.PageModelUtil;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +32,7 @@ public class TranslateBizController {
     private TranslatedTextService translatedTextService;
 
     @PostMapping("/queryTransText")
-    public PageResult<TransTextDTO> query(PageRequest<TransTextQueryParam> request) {
+    public PageResult<TransTextDTO> query(@RequestBody PageRequest<TransTextQueryParam> request) {
         PageResult<TranslatedTextBO> result = translatedTextService.query(request);
         return PageModelUtil.transformResult(result, this::convertTextB2DT);
     }

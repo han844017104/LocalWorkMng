@@ -17,7 +17,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class PageRequest<T> extends ToString {
 
-    private boolean isPaged;
+    private boolean paged;
 
     private long total;
 
