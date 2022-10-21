@@ -58,7 +58,7 @@ public class TranslatedTextServiceImpl implements TranslatedTextService {
                             .like("text_trans", condition.getFuzzyStr()));
         }
         if (CollectionUtils.isNotEmpty(condition.getOriginalDigestAndFromList())) {
-            wrapper.and(wp -> condition.getOriginalDigestAndFromList().forEach(e -> {
+            condition.getOriginalDigestAndFromList().forEach(e -> {
                 List<String> strings = SPLITTER.splitToList(e);
                 String original = strings.get(0);
                 String from = strings.get(1);
@@ -66,7 +66,7 @@ public class TranslatedTextServiceImpl implements TranslatedTextService {
                     w.eq("original_digest", original)
                             .eq("from_language", from);
                 });
-            }));
+            });
         }
         wrapper.orderByDesc("id");
         return template.queryPage(request, this::convertD2B, true, wrapper);
