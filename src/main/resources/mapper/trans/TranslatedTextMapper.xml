@@ -2,4 +2,33 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mrhan.localworkmng.dal.trans.mapper.TranslatedTextMapper">
 
+    <insert id="add" parameterType="com.mrhan.localworkmng.dal.trans.model.TranslatedTextDO" keyProperty="id">
+        insert into translated_text
+        (
+         from_language,
+         to_language,
+         text_original,
+         text_trans,
+         trans_engine,
+         original_digest,
+         trans_digest,
+         ext_info,
+         gmt_create
+        )
+        values
+        (
+         #{fromLanguage},
+         #{toLanguage},
+         #{textOriginal},
+         #{textTrans},
+         #{transEngine},
+         #{originalDigest},
+         #{transDigest},
+         #{extInfo},
+         CURRENT_TIMESTAMP
+        )
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
 </mapper>

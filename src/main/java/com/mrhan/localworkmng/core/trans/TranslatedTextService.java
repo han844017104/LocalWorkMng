@@ -18,4 +18,8 @@ public interface TranslatedTextService {
 
     PageResult<TranslatedTextBO> query(PageRequest<TransTextQueryParam> request);
 
+    boolean updateTransText(TranslatedTextBO bo);
+
+    Long insertTransText(TranslatedTextBO bo);
+
 }

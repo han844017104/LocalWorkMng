@@ -14,6 +14,8 @@ import lombok.Getter;
 @Getter
 public enum ResultCode {
     UNKNOWN("UNKNOWN_ERROR", "未知系统异常"),
+
+    ILLEGAL_ARGUMENT("ILLEGAL_ARGUMENT", "非法参数"),
     ;
 
     private final String code;

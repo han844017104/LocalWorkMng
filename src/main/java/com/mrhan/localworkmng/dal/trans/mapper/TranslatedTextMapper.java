@@ -13,4 +13,6 @@ import com.mrhan.localworkmng.dal.trans.model.TranslatedTextDO;
  */
 public interface TranslatedTextMapper extends BaseMapper<TranslatedTextDO> {
 
+    Long add(TranslatedTextDO textDO);
+
 }

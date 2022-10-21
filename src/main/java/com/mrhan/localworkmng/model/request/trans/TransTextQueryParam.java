@@ -19,6 +19,10 @@ import java.util.List;
 @Data
 public class TransTextQueryParam extends ToString {
 
+    private List<String> originalDigestList;
+
+    private List<String> originalDigestAndFromList;
+
     private String origin;
 
     private String trans;

@@ -16,50 +16,55 @@ public class LoggerUtil {
 
     public static void debug(Logger logger, String template, Object... params) {
         if (logger != null && logger.isDebugEnabled()) {
-            logger.debug(StrUtil.format(template, params));
+            logger.debug(getPrefix() + StrUtil.format(template, params));
         }
     }
 
     public static void debug(Logger logger, Throwable e, String template, Object... params) {
         if (logger != null && logger.isDebugEnabled()) {
-            logger.debug(StrUtil.format(template, params), e);
+            logger.debug(getPrefix() + StrUtil.format(template, params), e);
         }
     }
 
     public static void info(Logger logger, String template, Object... params) {
         if (logger != null && logger.isInfoEnabled()) {
-            logger.info(StrUtil.format(template, params));
+            logger.info(getPrefix() + StrUtil.format(template, params));
         }
     }
 
     public static void info(Logger logger, Throwable e, String template, Object... params) {
         if (logger != null && logger.isInfoEnabled()) {
-            logger.info(StrUtil.format(template, params), e);
+            logger.info(getPrefix() + StrUtil.format(template, params), e);
         }
     }
 
     public static void warn(Logger logger, String template, Object... params) {
         if (logger != null && logger.isWarnEnabled()) {
-            logger.warn(StrUtil.format(template, params));
+            logger.warn(getPrefix() + StrUtil.format(template, params));
         }
     }
 
     public static void warn(Logger logger, Throwable e, String template, Object... params) {
         if (logger != null && logger.isWarnEnabled()) {
-            logger.warn(StrUtil.format(template, params), e);
+            logger.warn(getPrefix() + StrUtil.format(template, params), e);
         }
     }
 
     public static void error(Logger logger, String template, Object... params) {
         if (logger != null && logger.isErrorEnabled()) {
-            logger.error(StrUtil.format(template, params));
+            logger.error(getPrefix() + StrUtil.format(template, params));
         }
     }
 
     public static void error(Logger logger, Throwable e, String template, Object... params) {
         if (logger != null && logger.isErrorEnabled()) {
-            logger.error(StrUtil.format(template, params), e);
+            logger.error(getPrefix() + StrUtil.format(template, params), e);
         }
+    }
+
+    private static String getPrefix() {
+        String traceId = TraceUtil.getTraceId();
+        return "[" + (traceId == null ? "-" : traceId) + "]";
     }
 
 }

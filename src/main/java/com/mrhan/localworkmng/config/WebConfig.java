@@ -63,11 +63,9 @@ public class WebConfig implements WebMvcConfigurer {
                             String controllerName = handlerMethod.getBeanType().getSimpleName();
                             String method = handlerMethod.getMethod().getName();
                             TraceUtil.TraceContext context = TraceUtil.getTraceContext();
-                            String traceId = Optional.ofNullable(context).map(
-                                    TraceUtil.TraceContext::getTraceId).orElse("-");
                             Long start = Optional.ofNullable(context).map(
                                     TraceUtil.TraceContext::getTraceStartTime).orElse(null);
-                            LoggerUtil.info(LOGGER, "[{}][{}.{}]({},{})", traceId, controllerName, method,
+                            LoggerUtil.info(LOGGER, "[{}.{}]({},{})", controllerName, method,
                                     start == null ? 0 : System.currentTimeMillis() - start, ex == null ? "Y" : "N");
                         }
                         TraceUtil.cleanTrace();

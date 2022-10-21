@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class TraceUtil {
 
-    private static final ThreadLocal<TraceContext> TRACE_CONTEXT_THREAD_LOCAL = new ThreadLocal<>();
+    private static final ThreadLocal<TraceContext> TRACE_CONTEXT_THREAD_LOCAL = new InheritableThreadLocal<>();
 
     public static String createTrace() {
         long now = new Date().getTime();
@@ -42,6 +42,10 @@ public class TraceUtil {
 
     public static TraceContext getTraceContext() {
         return TRACE_CONTEXT_THREAD_LOCAL.get();
+    }
+
+    public static void setTraceContext(TraceContext context) {
+        TRACE_CONTEXT_THREAD_LOCAL.set(context);
     }
 
     public static String getTraceId() {

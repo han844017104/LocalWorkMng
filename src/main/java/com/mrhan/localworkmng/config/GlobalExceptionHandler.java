@@ -33,7 +33,8 @@ public class GlobalExceptionHandler {
         if (e instanceof BizException) {
             return new BaseResult(((BizException) e).getErrorCode(), ((BizException) e).getErrorMessage());
         }
-        return new BaseResult(ResultCode.UNKNOWN.getCode(), ResultCode.UNKNOWN.getMessage());
+        return new BaseResult(ResultCode.UNKNOWN.getCode(),
+                ResultCode.UNKNOWN.getMessage() + ": " + e.getMessage());
     }
 
 }
