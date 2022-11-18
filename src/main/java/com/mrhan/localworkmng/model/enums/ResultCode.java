@@ -16,6 +16,8 @@ public enum ResultCode {
     UNKNOWN("UNKNOWN_ERROR", "未知系统异常"),
 
     ILLEGAL_ARGUMENT("ILLEGAL_ARGUMENT", "非法参数"),
+
+    DATA_EXISTED("DATA_EXISTED", "数据已存在"),
     ;
 
     private final String code;

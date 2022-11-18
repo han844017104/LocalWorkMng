@@ -9,18 +9,22 @@ import com.mrhan.localworkmng.core.trans.TranslateLogService;
 import com.mrhan.localworkmng.core.trans.TranslatedTextService;
 import com.mrhan.localworkmng.model.bo.TranslateFrequentWord;
 import com.mrhan.localworkmng.model.bo.TranslatedTextBO;
+import com.mrhan.localworkmng.model.enums.ResultCode;
 import com.mrhan.localworkmng.model.enums.TranslateEngineEnum;
 import com.mrhan.localworkmng.model.request.PageRequest;
 import com.mrhan.localworkmng.model.request.trans.TransTextQueryParam;
 import com.mrhan.localworkmng.model.response.BaseResult;
 import com.mrhan.localworkmng.model.response.PageResult;
 import com.mrhan.localworkmng.model.response.SimpleResult;
+import com.mrhan.localworkmng.model.response.trans.CustomTransTextModel;
 import com.mrhan.localworkmng.model.response.trans.TransLogGroup;
 import com.mrhan.localworkmng.model.response.trans.TransTextDTO;
 import com.mrhan.localworkmng.util.BeanUtil;
 import com.mrhan.localworkmng.util.CryptUtil;
 import com.mrhan.localworkmng.util.PageModelUtil;
 import com.mrhan.localworkmng.util.ValidateUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +44,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/trans")
+@Api(value = "翻译业务Controller", tags = {"翻译", "后台"})
 public class TranslateBizController {
 
     private static final Joiner JOINER = Joiner.on("#").useForNull("-");
@@ -51,6 +56,7 @@ public class TranslateBizController {
     private TranslateLogService translateLogService;
 
     @PostMapping("/queryTransText")
+    @ApiOperation("译文查询")
     public PageResult<TransTextDTO> query(@RequestBody PageRequest<TransTextQueryParam> request) {
         ValidateUtil.checkNotNull(request, "入参为空");
         if (request.getCondition() == null) {
@@ -61,6 +67,7 @@ public class TranslateBizController {
     }
 
     @PostMapping("/queryFrequentWords")
+    @ApiOperation("热词查询")
     public PageResult<TransLogGroup> queryFrequentWords(@RequestBody PageRequest<TransLogGroup> request) {
         PageResult<TranslateFrequentWord> translateFrequentWordPageResult = translateLogService.queryFrequentWords(
                 request);
@@ -84,6 +91,7 @@ public class TranslateBizController {
     }
 
     @PostMapping("/updateTransText")
+    @ApiOperation("译文更新")
     public BaseResult updateTransText(@RequestBody TransTextDTO dto) {
         ValidateUtil.checkNotNull(dto, "入参为空");
         ValidateUtil.checkTrue(dto.getId() != null && dto.getId() > 0L, "ID不合法");
@@ -92,16 +100,26 @@ public class TranslateBizController {
     }
 
     @PostMapping("/buildCustomTranslate")
-    public SimpleResult<Long> buildCustomTranslate(@RequestBody TransTextDTO dto) {
+    @ApiOperation("译文优化")
+    public SimpleResult<TransTextDTO> buildCustomTranslate(@RequestBody CustomTransTextModel dto) {
         ValidateUtil.checkNotNull(dto, "入参为空");
         ValidateUtil.checkNotBlank(dto.getTextTrans(), "译文为空");
         ValidateUtil.checkNotBlank(dto.getTextOriginal(), "原文为空");
-        ValidateUtil.checkNotBlank(dto.getFromLanguage(), "原始语言为空");
-        ValidateUtil.checkNotBlank(dto.getToLanguage(), "译文语音为空");
+        ValidateUtil.checkNotBlank(dto.getFromLanguage(), "原文语种为空");
+        ValidateUtil.checkNotBlank(dto.getToLanguage(), "译文语种为空");
         dto.setTransEngine(TranslateEngineEnum.CUSTOM.name());
         dto.setOriginalDigest(CryptUtil.digestMd5(dto.getTextOriginal()));
         dto.setTransDigest(CryptUtil.digestMd5(dto.getTextTrans()));
-        return new SimpleResult<>(translatedTextService.insertTransText(convertTextDT2B(dto)));
+        TranslatedTextBO exist = translatedTextService.upsertTransText(convertTextDT2B(dto),
+                dto.isForceOverride());
+        if (exist != null) {
+            SimpleResult<TransTextDTO> result = new SimpleResult<>(convertTextB2DT(exist));
+            result.setSuccess(false);
+            result.setCode(ResultCode.DATA_EXISTED.getCode());
+            result.setMessage(ResultCode.DATA_EXISTED.getMessage());
+            return result;
+        }
+        return new SimpleResult<>(null);
     }
 
     private TransLogGroup convertLogGroup(TranslateFrequentWord word, List<TranslatedTextBO> textList) {

@@ -20,6 +20,6 @@ public interface TranslatedTextService {
 
     boolean updateTransText(TranslatedTextBO bo);
 
-    Long insertTransText(TranslatedTextBO bo);
+    TranslatedTextBO upsertTransText(TranslatedTextBO bo, boolean override);
 
 }

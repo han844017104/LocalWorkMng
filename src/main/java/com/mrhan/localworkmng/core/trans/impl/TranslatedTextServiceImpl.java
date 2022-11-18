@@ -7,11 +7,15 @@ package com.mrhan.localworkmng.core.trans.impl;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.mrhan.localworkmng.core.template.CommonPageTemplate;
 import com.mrhan.localworkmng.core.trans.TranslatedTextService;
 import com.mrhan.localworkmng.dal.trans.mapper.TranslatedTextMapper;
 import com.mrhan.localworkmng.dal.trans.model.TranslatedTextDO;
 import com.mrhan.localworkmng.model.bo.TranslatedTextBO;
+import com.mrhan.localworkmng.model.enums.ResultCode;
+import com.mrhan.localworkmng.model.enums.TranslateEngineEnum;
+import com.mrhan.localworkmng.model.exception.BizException;
 import com.mrhan.localworkmng.model.request.PageRequest;
 import com.mrhan.localworkmng.model.request.trans.TransTextQueryParam;
 import com.mrhan.localworkmng.model.response.PageResult;
@@ -83,9 +87,31 @@ public class TranslatedTextServiceImpl implements TranslatedTextService {
 
     @Override
     @Transactional(transactionManager = "transTransactionManager", rollbackFor = Exception.class)
-    public Long insertTransText(TranslatedTextBO bo) {
+    public TranslatedTextBO upsertTransText(TranslatedTextBO bo, boolean override) {
+        PageRequest<TransTextQueryParam> request = new PageRequest<TransTextQueryParam>()
+                .withCondition(new TransTextQueryParam())
+                .condWrap(e -> {
+                    e.setFrom(bo.getFromLanguage());
+                    e.setTo(bo.getToLanguage());
+                    e.setOrigin(bo.getTextOriginal());
+                    e.setOriginalDigestList(Lists.newArrayList(bo.getOriginalDigest()));
+                    e.setEngines(Lists.newArrayList(TranslateEngineEnum.CUSTOM.name()));
+                });
+        PageResult<TranslatedTextBO> exist = query(request);
+        if (CollectionUtils.isNotEmpty(exist.getResults())) {
+            ValidateUtil.checkTrue(exist.getResults().size() == 1, "too many exist data: " + exist.getResults().size());
+            TranslatedTextBO existData = exist.getResults().get(0);
+            if (!override) {
+                return existData;
+            }
+            existData.setTextTrans(bo.getTextTrans());
+            existData.setTransDigest(bo.getTransDigest());
+            translatedTextMapper.updateById(existData);
+            return null;
+        }
+
         translatedTextMapper.add(bo);
-        return bo.getId();
+        return null;
     }
 
     private TranslatedTextBO convertD2B(TranslatedTextDO ado) {
