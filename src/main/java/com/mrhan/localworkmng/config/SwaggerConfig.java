@@ -36,8 +36,8 @@ public class SwaggerConfig {
     }
 
     private ApiInfo apiInfo() {
-        return new ApiInfoBuilder().title("swagger和springBoot整合")
-                .description("swagger的API文档")
+        return new ApiInfoBuilder().title("LocalWorkMng")
+                .description("本地工作中台")
                 .version("1.0")
                 .build();
     }
