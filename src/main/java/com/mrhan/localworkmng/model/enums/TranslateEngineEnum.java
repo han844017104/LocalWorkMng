@@ -64,6 +64,11 @@ public enum TranslateEngineEnum {
      *
      */
     GOOGLE_GTX("GoogleGTXEngine", 8),
+
+    /**
+     * 谷歌
+     */
+    GOOGLE("GoogleEngine", 10),
     ;
 
     private final String engineName;
