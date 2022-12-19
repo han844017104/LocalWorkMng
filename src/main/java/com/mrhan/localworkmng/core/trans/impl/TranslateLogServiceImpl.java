@@ -43,6 +43,7 @@ public class TranslateLogServiceImpl implements TranslateLogService {
                 new QueryWrapper<TranslateLogDO>()
                         .select("count(*) as count", "original_digest", "from_lang")
                         .groupBy("original_digest", "from_lang")
+                        .having("count > {0}", "1")
                         .orderByDesc("count")
         );
         PageResult<TranslateFrequentWord> result = new PageResult<>();

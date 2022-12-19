@@ -22,6 +22,7 @@ import com.mrhan.localworkmng.model.response.trans.TransTextDTO;
 import com.mrhan.localworkmng.util.BeanUtil;
 import com.mrhan.localworkmng.util.CryptUtil;
 import com.mrhan.localworkmng.util.PageModelUtil;
+import com.mrhan.localworkmng.util.TimeMeter;
 import com.mrhan.localworkmng.util.ValidateUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -69,8 +70,8 @@ public class TranslateBizController {
     @PostMapping("/queryFrequentWords")
     @ApiOperation("热词查询")
     public PageResult<TransLogGroup> queryFrequentWords(@RequestBody PageRequest<TransLogGroup> request) {
-        PageResult<TranslateFrequentWord> translateFrequentWordPageResult = translateLogService.queryFrequentWords(
-                request);
+        PageResult<TranslateFrequentWord> translateFrequentWordPageResult =
+                TimeMeter.mete(() -> translateLogService.queryFrequentWords(request), "queryRankDigest");
         List<TranslateFrequentWord> results = translateFrequentWordPageResult.getResults();
         if (CollectionUtils.isNotEmpty(results)) {
             PageRequest<TransTextQueryParam> textQueryRequest = new PageRequest<TransTextQueryParam>()
@@ -79,7 +80,10 @@ public class TranslateBizController {
                             results.stream().map(t -> JOINER.join(t.getOriginalDigest(), t.getFromLanguage()))
                                     .collect(Collectors.toList())
                     ));
-            List<TranslatedTextBO> texts = translatedTextService.query(textQueryRequest).getResults();
+            List<TranslatedTextBO> texts = TimeMeter.mete(
+                    () -> translatedTextService.query(textQueryRequest).getResults(),
+                    "queryWordsInfo"
+            );
             Map<String, List<TranslatedTextBO>> originDigestMapping = texts.stream().collect(
                     Collectors.groupingBy(t -> JOINER.join(t.getOriginalDigest(), t.getFromLanguage())));
             return PageModelUtil.transformResult(translateFrequentWordPageResult,

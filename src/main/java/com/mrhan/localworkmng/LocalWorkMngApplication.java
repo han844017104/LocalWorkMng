@@ -9,7 +9,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class LocalWorkMngApplication {
 
     public static void main(String[] args) {
+        beforeRun();
         SpringApplication.run(LocalWorkMngApplication.class, args);
+    }
+
+    private static void beforeRun() {
+
     }
 
 }
