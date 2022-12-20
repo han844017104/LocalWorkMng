@@ -71,7 +71,7 @@ public class TranslateBizController {
     @ApiOperation("热词查询")
     public PageResult<TransLogGroup> queryFrequentWords(@RequestBody PageRequest<TransLogGroup> request) {
         PageResult<TranslateFrequentWord> translateFrequentWordPageResult =
-                TimeMeter.mete(() -> translateLogService.queryFrequentWords(request), "queryRankDigest");
+                TimeMeter.mete(() -> translateLogService.queryFrequentWordsByCache(request), "queryRankDigest");
         List<TranslateFrequentWord> results = translateFrequentWordPageResult.getResults();
         if (CollectionUtils.isNotEmpty(results)) {
             PageRequest<TransTextQueryParam> textQueryRequest = new PageRequest<TransTextQueryParam>()

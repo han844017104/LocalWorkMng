@@ -13,3 +13,7 @@ spring:
   application:
     name: LocalWorkMng
 
+  redis:
+    host: localhost
+    port: 6379
+

@@ -18,4 +18,12 @@ public interface TranslateLogService {
 
     PageResult<TranslateFrequentWord> queryFrequentWords(PageRequest<TransLogGroup> request);
 
+    PageResult<TranslateFrequentWord> queryFrequentWordsByCache(PageRequest<TransLogGroup> request);
+
+    String getCacheVersion();
+
+    void setCacheVersion(String newVersion);
+
+    String newCacheVersion();
+
 }
