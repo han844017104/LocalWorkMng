@@ -88,7 +88,9 @@ public class TranslateHotWordsRedisCacheRefresher extends SchedulerRunner {
     public void clear() {
         String cacheVersion = translateLogService.getCacheVersion();
         LoggerUtil.info(LOGGER, "[clear](hot words refresh)(clean current cache)({})", cacheVersion);
-        redisClient.remove(RedisConstance.TRANS_HOT_WORDS_CACHE_PREFIX + cacheVersion);
+        if (cacheVersion != null) {
+            redisClient.remove(RedisConstance.TRANS_HOT_WORDS_CACHE_PREFIX + cacheVersion);
+        }
     }
 
 }
