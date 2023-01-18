@@ -24,10 +24,10 @@ public class LocalWorkMngApplication {
     }
 
     private static void beforeRun() throws Exception {
-        checkAndRunRedis();
+        checkRedis();
     }
 
-    private static void checkAndRunRedis() throws Exception {
+    private static void checkRedis() throws Exception {
         ClassPathResource resource = new ClassPathResource("application.yaml");
         Dict load = YamlUtil.load(new InputStreamReader(resource.getInputStream()));
         Integer port = load.getByPath("spring.redis.port", Integer.class);
