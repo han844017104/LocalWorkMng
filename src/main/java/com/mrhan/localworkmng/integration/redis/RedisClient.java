@@ -2,8 +2,9 @@
  * F5Loser
  * Copyright (c) 2021-2022 All Rights Reserved
  */
-package com.mrhan.localworkmng.integration;
+package com.mrhan.localworkmng.integration.redis;
 
+import cn.hutool.core.collection.ListUtil;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.common.collect.Lists;
 import com.mrhan.localworkmng.util.JsonUtil;
@@ -59,10 +60,13 @@ public class RedisClient {
     }
 
     public void zSetBatchSet(String key, List<Pair<String, Double>> values, long expireMs) {
-        stringRedisTemplate.opsForZSet().add(key, values.stream()
-                .map(pair -> ZSetOperations.TypedTuple.of(pair.getLeft(), pair.getRight()))
-                .collect(Collectors.toSet())
-        );
+        List<List<Pair<String, Double>>> partition = ListUtil.partition(values, 10000);
+        for (List<Pair<String, Double>> pairs : partition) {
+            stringRedisTemplate.opsForZSet().add(key, pairs.stream()
+                    .map(pair -> ZSetOperations.TypedTuple.of(pair.getLeft(), pair.getRight()))
+                    .collect(Collectors.toSet())
+            );
+        }
         stringRedisTemplate.expire(key, expireMs, TimeUnit.MILLISECONDS);
     }
 

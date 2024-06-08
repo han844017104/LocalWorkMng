@@ -11,7 +11,7 @@ import com.google.common.collect.Lists;
 import com.mrhan.localworkmng.core.trans.TranslateLogService;
 import com.mrhan.localworkmng.dal.trans.mapper.TranslateLogMapper;
 import com.mrhan.localworkmng.dal.trans.model.TranslateLogDO;
-import com.mrhan.localworkmng.integration.RedisClient;
+import com.mrhan.localworkmng.integration.redis.RedisClient;
 import com.mrhan.localworkmng.model.bo.TranslateFrequentWord;
 import com.mrhan.localworkmng.model.constance.RedisConstance;
 import com.mrhan.localworkmng.model.request.PageRequest;

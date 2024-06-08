@@ -33,6 +33,8 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 @MapperScan(basePackages = {"com.mrhan.localworkmng.dal.trans.mapper"},
         sqlSessionTemplateRef = "transSqlSessionTemplate")
+@MapperScan(basePackages = {"com.mrhan.localworkmng.dal.f95.mapper"},
+        sqlSessionTemplateRef = "f95SqlSessionTemplate")
 public class DalConfiguration {
 
     /**
@@ -75,5 +77,47 @@ public class DalConfiguration {
     }
 
     /** --------------- trans dal config end --------------- */
+
+
+    /**
+     * --------------- f95 dal config start ---------------
+     */
+    @Bean
+    @ConfigurationProperties(prefix = "spring.datasource.f95")
+    public DataSource f95DataSource() {
+        return DataSourceBuilder.create().build();
+    }
+
+    @Bean
+    public SqlSessionFactory f95SqlSessionFactory(@Qualifier("f95DataSource") DataSource dataSource) throws
+            Exception {
+        MybatisSqlSessionFactoryBean bean = new MybatisSqlSessionFactoryBean();
+        bean.setDataSource(dataSource);
+        bean.setMapperLocations(new PathMatchingResourcePatternResolver()
+                .getResources("classpath:mapper/f95/*.xml"));
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        bean.setPlugins(interceptor);
+        return bean.getObject();
+    }
+
+    @Bean
+    public DataSourceTransactionManager f95TransactionManager(@Qualifier("f95DataSource") DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
+    }
+
+    @Bean
+    public TransactionTemplate f95TransactionTemplate(@Qualifier("f95TransactionManager")
+                                                        PlatformTransactionManager transactionManager) {
+        return new TransactionTemplate(transactionManager);
+    }
+
+    @Bean
+    public SqlSessionTemplate f95SqlSessionTemplate(
+            @Qualifier("f95SqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
+        return new SqlSessionTemplate(sqlSessionFactory);
+    }
+
+    /** --------------- f95 dal config end --------------- */
 
 }

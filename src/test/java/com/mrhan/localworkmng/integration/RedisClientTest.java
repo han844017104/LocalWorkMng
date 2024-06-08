@@ -4,6 +4,7 @@
  */
 package com.mrhan.localworkmng.integration;
 
+import com.mrhan.localworkmng.integration.redis.RedisClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

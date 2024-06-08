@@ -6,7 +6,7 @@ package com.mrhan.localworkmng.schedule.runner;
 
 import com.google.common.collect.Lists;
 import com.mrhan.localworkmng.core.trans.TranslateLogService;
-import com.mrhan.localworkmng.integration.RedisClient;
+import com.mrhan.localworkmng.integration.redis.RedisClient;
 import com.mrhan.localworkmng.model.bo.TranslateFrequentWord;
 import com.mrhan.localworkmng.model.constance.RedisConstance;
 import com.mrhan.localworkmng.model.request.PageRequest;

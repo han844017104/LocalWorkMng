@@ -3,6 +3,7 @@ package com.mrhan.localworkmng.util;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mrhan.localworkmng.model.enums.TranslateEngineEnum;
 import com.mrhan.localworkmng.model.request.PageRequest;
@@ -19,6 +20,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,9 +36,20 @@ public class WordsStreamUtil {
 
     private String to = "zh";
 
-    private String outputDir = "C:\\Users\\MrHan\\Desktop\\trans\\dataset\\20221223";
+    private String outputDir = "C:\\Users\\MrHan\\Desktop\\trans\\dataset\\20221223-2";
 
-    private Set<String> usingEngines = Sets.newHashSet(
+    private static final Map<String, Integer> rewriteMapping = Maps.newHashMap();
+
+    static  {
+        rewriteMapping.put(TranslateEngineEnum.CUSTOM.name(), 5);
+        rewriteMapping.put(TranslateEngineEnum.GOOGLE.name(), 3);
+        rewriteMapping.put(TranslateEngineEnum.GOOGLE_GTX.name(), 3);
+        rewriteMapping.put(TranslateEngineEnum.TENCENT.name(), 1);
+        rewriteMapping.put(TranslateEngineEnum.AZURE.name(), 1);
+        rewriteMapping.put(TranslateEngineEnum.BAIDU.name(), 2);
+    }
+
+    private static final Set<String> usingEngines = Sets.newHashSet(
             TranslateEngineEnum.CUSTOM.name(),
             TranslateEngineEnum.GOOGLE.name(),
             TranslateEngineEnum.GOOGLE_GTX.name(),
@@ -101,11 +114,19 @@ public class WordsStreamUtil {
         }
         File sourceFile = FileUtil.newFile(outputDir + "\\" + from + ".txt");
         File targetFile = FileUtil.newFile(outputDir + "\\" + to + ".txt");
-        FileUtil.appendUtf8Lines(Lists.newArrayList(StrUtil.replace(group.getTextOriginal(), "\u200B", "")),
-                sourceFile);
-        FileUtil.appendUtf8Lines(
-                Lists.newArrayList(StrUtil.replace(group.getTrnasInfoList().get(0).getTextTrans(), "\u200B", "")),
-                targetFile);
+        List<String> sourceList = Lists.newArrayList();
+        List<String> targetList = Lists.newArrayList();
+        Integer rewriteTime = rewriteMapping.getOrDefault(group.getTrnasInfoList().get(0).getTransEngine(), 1);
+        for (int i = 0; i < rewriteTime; i++) {
+            sourceList.add(transform(group.getTextOriginal()));
+            targetList.add(transform(group.getTrnasInfoList().get(0).getTextTrans()));
+        }
+        FileUtil.appendUtf8Lines(sourceList, sourceFile);
+        FileUtil.appendUtf8Lines(targetList, targetFile);
+    }
+
+    private static String transform(String str) {
+        return nonLineFeed(StrUtil.replace(str, "\u200B", "")).trim();
     }
 
 
@@ -115,6 +136,13 @@ public class WordsStreamUtil {
         request.setSize(shardingSize);
         request.setCurrentPage(shardingIdx + 1);
         return translateBizController.queryFrequentWords(request).getResults();
+    }
+
+    private static String nonLineFeed(String text) {
+        if (text == null) {
+            return null;
+        }
+        return text.replace("\n", "").replace("\r", "");
     }
 
 }

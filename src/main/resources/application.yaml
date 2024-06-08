@@ -9,6 +9,11 @@ spring:
       jdbc-url: jdbc:mysql://localhost:3306/translate_core?useSSL=false&useUnicode=true&characterEncoding=UTF8&autoReconnect=true
       username: root
       password: Han237912
+    f95:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://localhost:3306/f95_data?useSSL=false&useUnicode=true&characterEncoding=UTF8&autoReconnect=true
+      username: root
+      password: Han237912
 
   application:
     name: LocalWorkMng
