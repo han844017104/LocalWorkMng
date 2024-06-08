@@ -22,3 +22,12 @@ spring:
     host: localhost
     port: 6379
 
+  net:
+    proxy:
+      host: 127.0.0.1
+      post: 10809
+
+biz:
+  f95:
+    sync:
+      limiter: 10
