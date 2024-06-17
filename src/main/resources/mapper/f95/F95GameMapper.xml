@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mrhan.localworkmng.dal.f95.mapper.F95GameMapper">
+
+    <insert id="upsert" parameterType="com.mrhan.localworkmng.dal.f95.model.F95Game">
+        INSERT INTO f95_data.f95_game
+        (thread_id, title, game_version, views, likes, like_ratio, rating, game_update_date, gmt_create, gmt_modified,
+         status, ext_info)
+        VALUES (#{threadId}, #{title}, #{gameVersion}, #{views}, #{likes}, #{likeRatio}, #{rating}, #{gameUpdateDate},
+                CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'RELEASED', #{extInfo})
+        ON DUPLICATE KEY UPDATE title            = values(title),
+                                game_version     = values(game_version),
+                                likes            = values(likes),
+                                like_ratio       = values(like_ratio),
+                                rating           = values(rating),
+                                game_update_date = values(game_update_date),
+                                gmt_modified     = CURRENT_TIMESTAMP,
+                                ext_info         = values(ext_info);
+    </insert>
+
+    <insert id="batchUpsert">
+        INSERT INTO f95_data.f95_game
+        (thread_id, title, game_version, views, likes, like_ratio, rating, game_update_date, gmt_create, gmt_modified,
+        status, ext_info)
+        VALUES
+        <foreach collection="list" item="one" separator=",">
+            (#{one.threadId}, #{one.title}, #{one.gameVersion}, #{one.views}, #{one.likes}, #{one.likeRatio},
+            #{one.rating}, #{one.gameUpdateDate},
+            CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'RELEASED', #{one.extInfo})
+        </foreach>
+        ON DUPLICATE KEY UPDATE title = values(title),
+        game_version = values(game_version),
+        likes = values(likes),
+        like_ratio = values(like_ratio),
+        rating = values(rating),
+        game_update_date = values(game_update_date),
+        gmt_modified = CURRENT_TIMESTAMP,
+        ext_info = values(ext_info);
+    </insert>
+
+</mapper>
