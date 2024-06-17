@@ -25,9 +25,8 @@ spring:
   net:
     proxy:
       host: 127.0.0.1
-      post: 10809
+      port: 10809
 
 biz:
   f95:
-    sync:
-      limiter: 10
+    gameSyncLimiter: 3

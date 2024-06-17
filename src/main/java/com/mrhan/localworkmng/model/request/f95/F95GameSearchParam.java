@@ -41,13 +41,7 @@ public class F95GameSearchParam extends ToString {
 
     private Long maxGameUpdateDate;
 
-    private List<String> inTags;
-
-    private List<String> notInTags;
-
-    private List<String> inPrefixes;
-
-    private List<String> notInPrefixes;
+    private List<ItemCondition> itemConditions;
 
     private List<CommonSortOrder> orders;
 

@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 import com.meilisearch.sdk.Index;
 import com.meilisearch.sdk.SearchRequest;
 import com.meilisearch.sdk.model.SearchResultPaginated;
-import com.meilisearch.sdk.model.Searchable;
 import com.meilisearch.sdk.model.Settings;
 import com.mrhan.localworkmng.core.template.CommonPageTemplate;
 import com.mrhan.localworkmng.dal.f95.mapper.F95GameMapper;
@@ -27,6 +26,7 @@ import com.mrhan.localworkmng.model.enums.F95RelationTypeEnum;
 import com.mrhan.localworkmng.model.request.CommonSortOrder;
 import com.mrhan.localworkmng.model.request.PageRequest;
 import com.mrhan.localworkmng.model.request.f95.F95GameSearchParam;
+import com.mrhan.localworkmng.model.request.f95.ItemCondition;
 import com.mrhan.localworkmng.model.response.PageResult;
 import com.mrhan.localworkmng.util.BeanUtil;
 import com.mrhan.localworkmng.util.LoggerUtil;
@@ -86,7 +86,7 @@ public class F95GameSearchService {
         refresh();
     }
 
-    @Scheduled(fixedDelay = 1000L * 10L)
+    @Scheduled(fixedDelay = 1000L * 30L)
     public void refresh() {
         List<F95Game> f95Games = loadAllGames();
         List<F95GameFatInfo> f95GameFatInfos = fillAndTransform2FatInfos(f95Games);
@@ -103,59 +103,48 @@ public class F95GameSearchService {
         if (StrUtil.isNotBlank(param.getTitle())) {
             builder.q(param.getTitle());
         }
-        List<String> filter = new ArrayList<>();
+        List<List<String>> filter = new ArrayList<>();
         List<String> sort = new ArrayList<>();
         if (StrUtil.isNotBlank(param.getThreadId())) {
-            filter.add("threadId = " + param.getThreadId());
+            filter.add(Lists.newArrayList("threadId = " + param.getThreadId()));
         }
         if (param.getMinView() != null) {
-            filter.add("views >= " + param.getMinView());
+            filter.add(Lists.newArrayList("views >= " + param.getMinView()));
         }
         if (param.getMaxView() != null) {
-            filter.add("views <= " + param.getMaxView());
+            filter.add(Lists.newArrayList("views <= " + param.getMaxView()));
         }
         if (param.getMinLike() != null) {
-            filter.add("likes >= " + param.getMinLike());
+            filter.add(Lists.newArrayList("likes >= " + param.getMinLike()));
         }
         if (param.getMaxLike() != null) {
-            filter.add("likes <= " + param.getMaxLike());
+            filter.add(Lists.newArrayList("likes <= " + param.getMaxLike()));
         }
         if (param.getMinLikeRatio() != null) {
-            filter.add("likeRatio >= " + param.getMinLikeRatio().doubleValue());
+            filter.add(Lists.newArrayList("likeRatio >= " + param.getMinLikeRatio().doubleValue()));
         }
         if (param.getMaxLikeRatio() != null) {
-            filter.add("likeRatio <= " + param.getMaxLikeRatio().doubleValue());
+            filter.add(Lists.newArrayList("likeRatio <= " + param.getMaxLikeRatio().doubleValue()));
         }
         if (param.getMinRating() != null) {
-            filter.add("rating >= " + param.getMinRating().doubleValue());
+            filter.add(Lists.newArrayList("rating >= " + param.getMinRating().doubleValue()));
         }
         if (param.getMaxRating() != null) {
-            filter.add("rating <= " + param.getMaxRating().doubleValue());
+            filter.add(Lists.newArrayList("rating <= " + param.getMaxRating().doubleValue()));
         }
         if (param.getMinGameUpdateDate() != null) {
-            filter.add("gameUpdateDate >= " + param.getMinGameUpdateDate());
+            filter.add(Lists.newArrayList("gameUpdateDate >= " + param.getMinGameUpdateDate()));
         }
         if (param.getMaxGameUpdateDate() != null) {
-            filter.add("gameUpdateDate <= " + param.getMaxGameUpdateDate());
+            filter.add(Lists.newArrayList("gameUpdateDate <= " + param.getMaxGameUpdateDate()));
         }
-        if (CollectionUtils.isNotEmpty(param.getInTags())) {
-            for (String inTag : param.getInTags()) {
-                filter.add("tagIds = " + inTag);
-            }
-        }
-        if (CollectionUtils.isNotEmpty(param.getNotInTags())) {
-            for (String notInTag : param.getNotInTags()) {
-                filter.add("tagIds != " + notInTag);
-            }
-        }
-        if (CollectionUtils.isNotEmpty(param.getInPrefixes())) {
-            for (String in : param.getInPrefixes()) {
-                filter.add("prefixIds = " + in);
-            }
-        }
-        if (CollectionUtils.isNotEmpty(param.getNotInPrefixes())) {
-            for (String notIn : param.getNotInPrefixes()) {
-                filter.add("prefixIds != " + notIn);
+        if (CollectionUtils.isNotEmpty(param.getItemConditions())) {
+            for (ItemCondition condition : param.getItemConditions()) {
+                List<String> ones = Lists.newArrayList();
+                for (String value : condition.getValues()) {
+                    ones.add(condition.getType() + " " + condition.getOp() + " " + value);
+                }
+                filter.add(ones);
             }
         }
         if (CollectionUtils.isNotEmpty(param.getOrders())) {
@@ -163,7 +152,7 @@ public class F95GameSearchService {
                 sort.add(order.getColumn() + ":" + (order.isAsc() ? "asc" : "desc"));
             }
         }
-        builder.filter(filter.toArray(new String[]{}));
+        builder.filterArray(transFilters(filter));
         builder.sort(sort.toArray(new String[]{}));
         SearchResultPaginated search = (SearchResultPaginated) index.search(builder.build());
         List<F95GameFatInfo> games = JSON.parseArray(JSON.toJSONString(search.getHits()), F95GameFatInfo.class);
@@ -175,6 +164,24 @@ public class F95GameSearchService {
         pageResult.setSuccess(true);
         pageResult.setResults(games);
         return pageResult;
+    }
+
+    private String[][] transFilters(List<List<String>> filter) {
+        if (CollectionUtils.isEmpty(filter)) {
+            return new String[][]{};
+        }
+        String[][] array = new String[filter.size()][];
+        for (int i = 0; i < filter.size(); i++) {
+            List<String> strings = filter.get(i);
+            String[] items;
+            if (CollectionUtils.isEmpty(strings)) {
+                items = new String[0];
+            } else {
+                items = strings.toArray(new String[0]);
+            }
+            array[i] = items;
+        }
+        return array;
     }
 
     private void initSettings(Settings settings) {
@@ -230,7 +237,7 @@ public class F95GameSearchService {
                 LoggerUtil.info(LOGGER, "[f95Game][loadAllGames](load game empty)({})", request.getCurrentPage());
                 break;
             }
-            LoggerUtil.info(LOGGER, "[f95Game][loadAllGames](load game)({})({})", request.getCurrentPage(), pageResult.getResults());
+            LoggerUtil.info(LOGGER, "[f95Game][loadAllGames](load game)({})({})", request.getCurrentPage(), pageResult.getResults().size());
             games.addAll(pageResult.getResults());
             request.setCurrentPage(request.getCurrentPage() + 1L);
         }

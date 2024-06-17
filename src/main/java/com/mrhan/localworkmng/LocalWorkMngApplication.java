@@ -8,6 +8,7 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.setting.yaml.YamlUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
