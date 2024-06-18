@@ -132,6 +132,7 @@ public class F95GameSynchronizer extends SchedulerRunner {
                 BigDecimal.ZERO :
                 new BigDecimal(game.getLikes())
                         .divide(new BigDecimal(game.getViews()), RoundingMode.HALF_UP)
+                        .multiply(new BigDecimal(100))
                         .setScale(2, RoundingMode.HALF_UP));
         game.setRating(new BigDecimal(one.getString("rating")));
         game.setGameUpdateDate(new Date(one.getLongValue("parsedTime")));

@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/trans")
-@Api(value = "翻译业务Controller", tags = {"翻译", "后台"})
+@Api(value = "翻译业务Controller", tags = {"翻译"})
 public class TranslateBizController {
 
     private static final Joiner JOINER = Joiner.on("#").useForNull("-");

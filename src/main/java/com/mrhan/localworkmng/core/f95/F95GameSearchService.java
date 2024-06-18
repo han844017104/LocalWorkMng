@@ -100,8 +100,8 @@ public class F95GameSearchService {
         SearchRequest.SearchRequestBuilder builder = SearchRequest.builder();
         builder.page(Long.valueOf(request.getCurrentPage()).intValue());
         builder.hitsPerPage(Long.valueOf(request.getSize()).intValue());
-        if (StrUtil.isNotBlank(param.getTitle())) {
-            builder.q(param.getTitle());
+        if (StrUtil.isNotBlank(param.getFuzzy())) {
+            builder.q(param.getFuzzy());
         }
         List<List<String>> filter = new ArrayList<>();
         List<String> sort = new ArrayList<>();
