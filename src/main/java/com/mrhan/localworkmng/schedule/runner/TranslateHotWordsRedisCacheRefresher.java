@@ -58,22 +58,28 @@ public class TranslateHotWordsRedisCacheRefresher extends SchedulerRunner {
     @Scheduled(cron = "20 0/10 * * * ? ")
     public void doRefreshCache() {
         LoggerUtil.info(LOGGER, "[schedule](hot words refresh)(start)");
-        List<TranslateFrequentWord> all = new LinkedList<>();
-        long page = 1L;
-        while (true) {
-            PageRequest<TransLogGroup> request = new PageRequest<>();
-            request.setPaged(true);
-            request.setSize(10000L);
-            request.setCurrentPage(page);
-            PageResult<TranslateFrequentWord> result = translateLogService.queryFrequentWords(request);
-            LoggerUtil.info(LOGGER, "[schedule](hot words refresh)(load page words)({})({})",
-                    page, result.getResults().size());
-            if (CollectionUtils.isEmpty(result.getResults())) {
-                break;
-            }
-            all.addAll(result.getResults());
-            page++;
-        }
+        PageRequest<TransLogGroup> request = new PageRequest<>();
+        request.setPaged(true);
+        request.setSize(Long.MAX_VALUE);
+        request.setCurrentPage(1L);
+        PageResult<TranslateFrequentWord> result = translateLogService.queryFrequentWords(request);
+        List<TranslateFrequentWord> all = result.getResults();
+//        List<TranslateFrequentWord> all = new LinkedList<>();
+//        long page = 1L;
+//        while (true) {
+//            PageRequest<TransLogGroup> request = new PageRequest<>();
+//            request.setPaged(true);
+//            request.setSize(10000L);
+//            request.setCurrentPage(page);
+//            PageResult<TranslateFrequentWord> result = translateLogService.queryFrequentWords(request);
+//            LoggerUtil.info(LOGGER, "[schedule](hot words refresh)(load page words)({})({})",
+//                    page, result.getResults().size());
+//            if (CollectionUtils.isEmpty(result.getResults())) {
+//                break;
+//            }
+//            all.addAll(result.getResults());
+//            page++;
+//        }
         LoggerUtil.info(LOGGER, "[schedule](hot words refresh)(load all words)({})", all.size());
         List<Pair<String, Double>> list = Lists.newArrayListWithCapacity(all.size());
         for (int i = 0; i < all.size(); i++) {
