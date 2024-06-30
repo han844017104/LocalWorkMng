@@ -86,7 +86,7 @@ public class F95GameSearchService {
         refresh();
     }
 
-    @Scheduled(fixedDelay = 1000L * 30L)
+    @Scheduled(fixedDelay = 1000L * 60L * 3L)
     public void refresh() {
         List<F95Game> f95Games = loadAllGames();
         List<F95GameFatInfo> f95GameFatInfos = fillAndTransform2FatInfos(f95Games);

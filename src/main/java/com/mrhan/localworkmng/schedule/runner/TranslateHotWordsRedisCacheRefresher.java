@@ -17,6 +17,7 @@ import com.mrhan.localworkmng.util.JsonUtil;
 import com.mrhan.localworkmng.util.LoggerUtil;
 import com.mrhan.localworkmng.util.TimeMeter;
 import com.mrhan.localworkmng.util.ValidateUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -27,6 +28,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -52,18 +55,28 @@ public class TranslateHotWordsRedisCacheRefresher extends SchedulerRunner {
         LoggerUtil.info(LOGGER, "[startup](init redis cache for hot words success!)");
     }
 
-    @Scheduled(cron = "20 0/1 * * * ? ")
+    @Scheduled(cron = "20 0/10 * * * ? ")
     public void doRefreshCache() {
         LoggerUtil.info(LOGGER, "[schedule](hot words refresh)(start)");
-        PageRequest<TransLogGroup> request = new PageRequest<>();
-        request.setPaged(true);
-        request.setSize(Long.MAX_VALUE);
-        request.setCurrentPage(1L);
-        PageResult<TranslateFrequentWord> result = translateLogService.queryFrequentWords(request);
-        LoggerUtil.info(LOGGER, "[schedule](hot words refresh)(load all words)({})", result.getResults().size());
-        List<Pair<String, Double>> list = Lists.newArrayListWithCapacity(result.getResults().size());
-        for (int i = 0; i < result.getResults().size(); i++) {
-            list.add(MutablePair.of(JsonUtil.toJsonString(result.getResults().get(i)),
+        List<TranslateFrequentWord> all = new LinkedList<>();
+        long page = 1L;
+        while (true) {
+            PageRequest<TransLogGroup> request = new PageRequest<>();
+            request.setPaged(true);
+            request.setSize(10000L);
+            request.setCurrentPage(page);
+            PageResult<TranslateFrequentWord> result = translateLogService.queryFrequentWords(request);
+            LoggerUtil.info(LOGGER, "[schedule](hot words refresh)(load page words)({})({})",
+                    page, result.getResults().size());
+            if (CollectionUtils.isEmpty(result.getResults())) {
+                break;
+            }
+            all.addAll(result.getResults());
+        }
+        LoggerUtil.info(LOGGER, "[schedule](hot words refresh)(load all words)({})", all.size());
+        List<Pair<String, Double>> list = Lists.newArrayListWithCapacity(all.size());
+        for (int i = 0; i < all.size(); i++) {
+            list.add(MutablePair.of(JsonUtil.toJsonString(all.get(i)),
                     Double.valueOf(String.valueOf(i))));
         }
         String oldVersion = translateLogService.getCacheVersion();
