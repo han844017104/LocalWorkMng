@@ -1,7 +1,7 @@
 package com.mrhan.localworkmng.dal.f95.mapper;
 
-import com.mrhan.localworkmng.dal.f95.model.F95Game;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.mrhan.localworkmng.dal.f95.model.F95Game;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -19,5 +19,7 @@ public interface F95GameMapper extends BaseMapper<F95Game> {
     int upsert(F95Game game);
 
     int batchUpsert(@Param("list") List<F95Game> games);
+
+    int updateChTitle(F95Game game);
 
 }

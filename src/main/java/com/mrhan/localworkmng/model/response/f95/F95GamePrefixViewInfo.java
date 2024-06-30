@@ -29,4 +29,7 @@ public class F95GamePrefixViewInfo extends ToString {
     @ApiModelProperty("前缀中文名")
     private String prefixChName;
 
+    @ApiModelProperty("前缀类型")
+    private String prefixType;
+
 }

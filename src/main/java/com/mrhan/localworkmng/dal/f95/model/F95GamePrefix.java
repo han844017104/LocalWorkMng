@@ -3,17 +3,17 @@ package com.mrhan.localworkmng.dal.f95.model;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.io.Serial;
-import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author MrHan
@@ -38,13 +38,16 @@ public class F95GamePrefix implements Serializable {
 
     private String prefixChName;
 
+    private String prefixType;
+
     @Override
     public String toString() {
         return "F95GamePrefix{" +
-            "id = " + id +
-            ", prefixId = " + prefixId +
-            ", prefixEnName = " + prefixEnName +
-            ", prefixChName = " + prefixChName +
-        "}";
+                "id = " + id +
+                ", prefixId = " + prefixId +
+                ", prefixEnName = " + prefixEnName +
+                ", prefixChName = " + prefixChName +
+                ", prefixType = " + prefixType +
+                "}";
     }
 }

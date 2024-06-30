@@ -33,6 +33,9 @@ public class F95GameViewInfo extends ToString {
     @ApiModelProperty("标题")
     private String title;
 
+    @ApiModelProperty("中文标题")
+    private String chTitle;
+
     @ApiModelProperty("游戏版本")
     private String gameVersion;
 
@@ -67,10 +70,10 @@ public class F95GameViewInfo extends ToString {
     private String mainPreview;
 
     @ApiModelProperty("游戏状态")
-    private F95GamePrefixViewInfo gameStatus;
+    private List<F95GamePrefixViewInfo> gameStatus;
 
     @ApiModelProperty("游戏引擎")
-    private F95GamePrefixViewInfo gameEngine;
+    private List<F95GamePrefixViewInfo> gameEngine;
 
     @ApiModelProperty("游戏前缀列表")
     private List<F95GamePrefixViewInfo> prefixes = new ArrayList<>();

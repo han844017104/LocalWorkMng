@@ -38,4 +38,11 @@
         ext_info = values(ext_info);
     </insert>
 
+    <update id="updateChTitle" parameterType="com.mrhan.localworkmng.dal.f95.model.F95Game">
+        update f95_data.f95_game
+        set ch_title     = #{chTitle},
+            gmt_modified = CURRENT_TIMESTAMP
+        where id = #{id}
+    </update>
+
 </mapper>

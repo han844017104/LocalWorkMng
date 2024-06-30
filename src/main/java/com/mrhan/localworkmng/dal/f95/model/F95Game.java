@@ -40,6 +40,8 @@ public class F95Game implements Serializable {
 
     private String title;
 
+    private String chTitle;
+
     private String gameVersion;
 
     private Long views;
@@ -66,6 +68,7 @@ public class F95Game implements Serializable {
                 "id = " + id +
                 ", threadId = " + threadId +
                 ", title = " + title +
+                ", chTitle = " + chTitle +
                 ", gameVersion = " + gameVersion +
                 ", views = " + views +
                 ", likes = " + likes +

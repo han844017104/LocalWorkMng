@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mrhan.localworkmng.dal.f95.mapper.F95GameTagMapper">
-
+    <insert id="batchUpsert">
+        INSERT INTO f95_data.f95_game_tag
+        (tag_id, tag_en_name, tag_ch_name)
+        VALUES
+        <foreach collection="list" item="one" separator=",">
+            (#{one.tagId}, #{one.tagEnName}, #{one.tagChName})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        tag_en_name = values(tag_en_name),
+        tag_ch_name = values(tag_ch_name)
+    </insert>
 </mapper>

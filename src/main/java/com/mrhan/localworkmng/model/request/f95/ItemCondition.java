@@ -1,8 +1,10 @@
 package com.mrhan.localworkmng.model.request.f95;
 
 import com.mrhan.localworkmng.model.ToString;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemCondition extends ToString {
 
     @Serial

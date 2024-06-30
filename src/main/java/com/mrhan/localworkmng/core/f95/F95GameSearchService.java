@@ -1,6 +1,5 @@
 package com.mrhan.localworkmng.core.f95;
 
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -9,6 +8,7 @@ import com.meilisearch.sdk.Index;
 import com.meilisearch.sdk.SearchRequest;
 import com.meilisearch.sdk.model.SearchResultPaginated;
 import com.meilisearch.sdk.model.Settings;
+import com.meilisearch.sdk.model.TaskInfo;
 import com.mrhan.localworkmng.core.template.CommonPageTemplate;
 import com.mrhan.localworkmng.dal.f95.mapper.F95GameMapper;
 import com.mrhan.localworkmng.dal.f95.mapper.F95GamePrefixMapper;
@@ -76,8 +76,8 @@ public class F95GameSearchService {
     @PostConstruct
     public void init() {
         meiLiSearchClient.getClient().deleteIndex(F95_NAME_SPACE);
-        meiLiSearchClient.getClient().createIndex(F95_NAME_SPACE, "threadId");
-        ThreadUtil.safeSleep(1000L);
+        TaskInfo taskInfo = meiLiSearchClient.getClient().createIndex(F95_NAME_SPACE, "threadId");
+        meiLiSearchClient.getClient().waitForTask(taskInfo.getTaskUid());
         Index index = meiLiSearchClient.index(F95_NAME_SPACE);
         Settings settings = index.getSettings();
         initSettings(settings);
@@ -154,6 +154,7 @@ public class F95GameSearchService {
         }
         builder.filterArray(transFilters(filter));
         builder.sort(sort.toArray(new String[]{}));
+
         SearchResultPaginated search = (SearchResultPaginated) index.search(builder.build());
         List<F95GameFatInfo> games = JSON.parseArray(JSON.toJSONString(search.getHits()), F95GameFatInfo.class);
         PageResult<F95GameFatInfo> pageResult = new PageResult<>();
@@ -221,6 +222,7 @@ public class F95GameSearchService {
                 "tagIds",
                 "prefixIds"
         });
+        settings.getPagination().setMaxTotalHits(99999);
     }
 
     private List<F95Game> loadAllGames() {

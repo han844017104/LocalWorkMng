@@ -138,6 +138,7 @@ public class F95GameSynchronizer extends SchedulerRunner {
         game.setGameUpdateDate(new Date(one.getLongValue("parsedTime")));
         JSONObject ext = new JSONObject();
         ext.put("originData", one);
+//        ext.put("gameChTitle", translateCoreClient.translate(game.getTitle(), "en", "zh"));
         game.setExtInfo(ext.toJSONString());
 
         JSONArray prefixes = one.getJSONArray("prefixes");
@@ -198,7 +199,7 @@ public class F95GameSynchronizer extends SchedulerRunner {
     private Integer doQuery(int page, Map<Integer, JSONArray> container) {
         HttpRequest get = HttpUtil.createGet(StrUtil.format("https://f95zone.to/sam/latest_alpha/latest_data.php?cmd=list&cat=games&page={}&sort=date&rows=90", page));
         get.setHttpProxy(proxyConfiguration.getHost(), Integer.parseInt(proxyConfiguration.getPort()));
-        get.cookie("__ddgid_=I1Q0KyhLm6EVQzZO; __ddg2_=RG6RNUVRQ2FyCtEQ; __ddg1_=qZLtSjeFiW1UBBwXIb3K; xf_user=103048^%^2C5hcBsKBC7sJW1-Frgkephvf32rUf4NqsnC3evk-_; _ga_HE9XJLVKML=deleted; _gid=GA1.2.691960919.1718196055; xf_csrf=h-eEd_AyZm5NfC5S; xf_session=Rk0PjdyoQ4TaojhperKNlF-RyATUD266; _ga_HE9XJLVKML=GS1.1.1718282698.691.0.1718282698.60.0.0; _ga=GA1.2.1225038220.1677928299^");
+        get.cookie("__ddgid_=I1Q0KyhLm6EVQzZO; __ddg2_=RG6RNUVRQ2FyCtEQ; __ddg1_=qZLtSjeFiW1UBBwXIb3K; xf_user=103048^%^2C5hcBsKBC7sJW1-Frgkephvf32rUf4NqsnC3evk-_; _ga_HE9XJLVKML=deleted; _gid=GA1.2.1841658518.1719577136; xf_csrf=ByDqNoQuk6EU7pln; xf_session=Re675bvGkxhU0SNPlWfg6rPgN3o6fN2E; _gat_gtag_UA_67186250_3=1; _ga=GA1.1.1225038220.1677928299; _ga_HE9XJLVKML=GS1.1.1719668788.730.0.1719668793.55.0.0^");
         HttpResponse execute = get.execute();
         ValidateUtil.checkTrue(execute.isOk(), "request is not ok: " + execute.getStatus());
         JSONObject body = JSON.parseObject(execute.body());

@@ -20,4 +20,8 @@ public class ListResult<T> extends BaseResult {
 
     private List<T> results;
 
+    public ListResult(List<T> results) {
+        this.results = results;
+        this.setSuccess(true);
+    }
 }

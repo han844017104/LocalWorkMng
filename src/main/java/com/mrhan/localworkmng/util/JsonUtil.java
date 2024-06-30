@@ -38,6 +38,14 @@ public class JsonUtil {
         return JSON.toJSONString(o, filter);
     }
 
+    public static JSONObject nonNullTryParse(String str) {
+        JSONObject jsonObject = tryParse(str);
+        if (jsonObject == null) {
+            return new JSONObject();
+        }
+        return jsonObject;
+    }
+
     public static JSONObject tryParse(String str) {
         JSONObject ret = null;
         if (StrUtil.isBlank(str)) {

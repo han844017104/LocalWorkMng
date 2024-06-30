@@ -26,7 +26,8 @@ spring:
     proxy:
       host: 127.0.0.1
       port: 10809
-
+server:
+  port: 8081
 biz:
   f95:
     gameSyncLimiter: 3

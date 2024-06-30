@@ -2,4 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mrhan.localworkmng.dal.f95.mapper.F95GamePrefixMapper">
 
+    <insert id="batchUpsert">
+        INSERT INTO f95_data.f95_game_prefix
+        (prefix_id, prefix_en_name, prefix_ch_name, prefix_type)
+        VALUES
+        <foreach collection="list" item="one" separator=",">
+            (#{one.prefixId}, #{one.prefixEnName}, #{one.prefixChName}, #{one.prefixType})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        prefix_en_name = values(prefix_en_name),
+        prefix_ch_name = values(prefix_ch_name),
+        prefix_type = values(prefix_type)
+    </insert>
 </mapper>

@@ -23,6 +23,8 @@ public class F95GameFatInfo {
 
     private String title;
 
+    private String chTitle;
+
     private String gameVersion;
 
     private long views;
