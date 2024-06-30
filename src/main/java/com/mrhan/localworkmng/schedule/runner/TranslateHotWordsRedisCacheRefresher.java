@@ -72,6 +72,7 @@ public class TranslateHotWordsRedisCacheRefresher extends SchedulerRunner {
                 break;
             }
             all.addAll(result.getResults());
+            page++;
         }
         LoggerUtil.info(LOGGER, "[schedule](hot words refresh)(load all words)({})", all.size());
         List<Pair<String, Double>> list = Lists.newArrayListWithCapacity(all.size());
